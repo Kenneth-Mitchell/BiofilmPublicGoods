@@ -20,7 +20,7 @@ to setup-bacteria
   set-default-shape turtles "circle 2"
   create-turtles initial-bacteria [
     setxy random-xcor random-ycor
-    set energy 10
+    set energy 50
     set hunger 100
     if-else (random-float 1.0 < proportion-producer) [
       set breed producers
@@ -34,7 +34,11 @@ to setup-bacteria
 end
 
 to go
-    diffuse nutrients diffusion
+  diffuse nutrients diffusion
+  ask patches [
+    set pcolor scale-color (green - 1) nutrients 0 50
+    set nutrients nutrients * 0.5
+  ]
 
   ask producers  [
     eat
@@ -48,6 +52,7 @@ to go
     move
   ]
   ask turtles with [breed != chitinases][
+    set energy energy - 5
     reproduce
     if energy < 0 [die]
   ]
@@ -55,8 +60,10 @@ to go
 end
 
 to eat
+  if nutrients > 1 [
   set nutrients nutrients - 1
-  set energy energy + 1
+  set energy energy + 5
+  ]
 end
 
 to produce_chitinase
@@ -85,7 +92,7 @@ end
 to move
   rt random 360
   fd 0.1
-  if (random-float 1.0 > 0.9) [die]
+  if (random-float 1.0 > 0.5) [die]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -109,8 +116,8 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -154,7 +161,7 @@ BUTTON
 43
 NIL
 go\n
-NIL
+T
 1
 T
 OBSERVER
@@ -188,7 +195,7 @@ diffusion
 diffusion
 0
 1
-1.0
+0.4
 0.1
 1
 NIL
