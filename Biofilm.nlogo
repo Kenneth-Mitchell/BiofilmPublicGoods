@@ -21,7 +21,7 @@ to setup-bacteria
   create-turtles initial-bacteria [
     setxy random-xcor random-ycor
     set energy 50
-    set hunger 100
+    set hunger 10
     if-else (random-float 1.0 < proportion-producer) [
       set breed producers
       set color cyan
@@ -34,10 +34,10 @@ to setup-bacteria
 end
 
 to go
-  diffuse nutrients diffusion
+  diffuse nutrients (1 - (Biofilm-Thickness * 0.1))
   ask patches [
     set pcolor scale-color (green - 1) nutrients 0 50
-    set nutrients nutrients * 0.5
+    set nutrients nutrients * (1 - (Flow-Rate * 0.05))
   ]
 
   ask producers  [
@@ -55,22 +55,30 @@ to go
     set energy energy - 5
     reproduce
     if energy < 0 [die]
+    if count turtles-here with [breed != chitinases] > 5 [die]
   ]
   tick
 end
 
 to eat
-  if nutrients > 1 [
+  ifelse nutrients > 1 [
   set nutrients nutrients - 1
-  set energy energy + 5
+  set energy energy + 10
+  set hunger hunger - 1
+  ][
+  set hunger hunger + hunger-threshold
   ]
+
 end
 
 to produce_chitinase
-  if hunger > hunger-threshold [
+  if hunger > hunger-threshold and energy > 20 [
+    set energy energy - 10
+    set hunger hunger + 1
     hatch-chitinases 1 [
       setxy xcor ycor
       set shape "dot"
+      set color green
     ]
   ]
 end
@@ -81,7 +89,8 @@ end
 
 to reproduce
   if energy > energy-threshold[
-    set energy energy - 50
+    set energy energy - (energy-threshold - 20)
+    set hunger hunger + 1
     hatch 1 [
       setxy (xcor - 1 + (random-float 2.0)) (ycor - 1 + (random-float 2.0))
       set energy 10
@@ -91,8 +100,8 @@ end
 
 to move
   rt random 360
-  fd 0.1
-  if (random-float 1.0 > 0.5) [die]
+  fd (1 - (Biofilm-Thickness * 0.1))
+  if (random-float 1.0 > (1 - (Flow-Rate * 0.05))) [die]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -141,14 +150,14 @@ NIL
 
 SLIDER
 6
-49
-178
-82
+80
+180
+113
 initial-bacteria
 initial-bacteria
 0
 100
-50.0
+100.0
 1
 1
 NIL
@@ -172,64 +181,150 @@ NIL
 1
 
 SLIDER
-0
-83
-193
+7
 116
+182
+149
 proportion-producer
 proportion-producer
 0
 1
-0.7
+0.3
 0.1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-4
-130
-176
-163
-diffusion
-diffusion
-0
-1
-0.4
-0.1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-0
-229
-172
-262
+9
+187
+181
+220
 hunger-threshold
 hunger-threshold
 0
-100
-50.0
+20
+10.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-0
-173
-172
-206
+9
+153
+181
+186
 energy-threshold
 energy-threshold
 0
 100
-50.0
+60.0
 1
 1
 NIL
 HORIZONTAL
+
+SLIDER
+10
+581
+301
+614
+Biofilm-Thickness
+Biofilm-Thickness
+0
+10
+3.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+321
+572
+391
+617
+Diffusion
+(1 - (Biofilm-Thickness * 0.1))
+1
+1
+11
+
+SLIDER
+11
+618
+301
+651
+Flow-Rate
+Flow-Rate
+0
+10
+3.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+321
+622
+378
+667
+Decay
+(1 - (Flow-Rate * 0.05\n))
+17
+1
+11
+
+TEXTBOX
+11
+60
+161
+79
+Initial Parameters
+15
+0.0
+1
+
+TEXTBOX
+14
+227
+164
+245
+Suggested: 100, 0.3, 60, 10
+11
+0.0
+0
+
+TEXTBOX
+15
+558
+165
+577
+Parameters to vary:
+15
+0.0
+1
+
+PLOT
+8
+251
+418
+552
+Colony counts
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"Producers" 1.0 0 -11221820 true "" "plot count Producers"
+"Cheaters" 1.0 0 -2674135 true "" "plot count Cheaters"
 
 @#$#@#$#@
 ## WHAT IS IT?
