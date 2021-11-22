@@ -329,39 +329,23 @@ PENS
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This model is meant to analyze under what conditions cooperative bacteria can dominate over cheating bacteria. The paramters of interest are biofilm thickness and flowrate.
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+Bacteria have energy, hunger, and position, but are immobile. They are either producers or non-producers of chitinase. If producers reach a certain hunger level, then they produce chitinase. If any bacteria reaches a certain energy level, it will reproduce. Energy decreases over time, while hunger increases over time as a function of nutrients consumed.
+
+The diffusion of nutrients in the environment and the enzymes which produce chitin are controlled by the biofilm thickness, while decay of these are controlled by the flowrate.
+
+The simulation starts with a number of random bacteria (either producers (blue) or non-producers (red)).
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
-
-## THINGS TO NOTICE
-
-(suggested things for the user to notice while running the model)
+Hunger-threshold controls how hungry producers must be to produce enzymes while energy-threshold controls how much energy an organism needs to reproduce. Other parameters are self explanatory.
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
-
-## EXTENDING THE MODEL
-
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
-
-## NETLOGO FEATURES
-
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
-
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
-
-## CREDITS AND REFERENCES
-
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+The default parameters are laid out on the interface. Using those it is interesting to see how biofilm thickness and flowrate changes whether producer colonies thrive or are invaded by cheaters. The initial placement of these colonies influences the results as well.
 @#$#@#$#@
 default
 true
