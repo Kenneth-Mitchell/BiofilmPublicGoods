@@ -38,12 +38,6 @@ to go
     set pcolor scale-color (green - 1) nutrients 0 50
     set nutrients nutrients * (1 - (Flow-Rate * 0.05))
   ]
-
-
-  ask chitinases[
-    produce-nutrients
-    move
-  ]
   ask turtles with [breed != chitinases][
     eat
     if breed = producers [produce_chitinase]
@@ -51,6 +45,10 @@ to go
     reproduce
     if energy < 0 [die]
     if count turtles-here with [breed != chitinases] > 5 [die]
+  ]
+    ask chitinases[
+    produce-nutrients
+    move
   ]
   tick
 end
@@ -94,7 +92,7 @@ to reproduce
     set hunger hunger + 1
     hatch 1 [
       setxy (xcor - 1 + (random-float 2.0)) (ycor - 1 + (random-float 2.0))
-      set energy 10
+      set energy 20
     ]
   ]
 end
@@ -220,7 +218,7 @@ energy-threshold
 energy-threshold
 0
 100
-50.0
+75.0
 1
 1
 NIL
@@ -336,7 +334,7 @@ chitinase-cost
 chitinase-cost
 0
 40
-20.0
+10.0
 1
 1
 NIL
@@ -366,7 +364,7 @@ energy-from-nutrients
 energy-from-nutrients
 0
 20
-8.0
+10.0
 1
 1
 NIL
@@ -381,7 +379,7 @@ environment-nutrients
 environment-nutrients
 0
 2
-0.4
+0.0
 0.1
 1
 NIL
@@ -411,7 +409,7 @@ initial-energy
 initial-energy
 0
 100
-75.0
+50.0
 1
 1
 NIL
