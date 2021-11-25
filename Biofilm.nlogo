@@ -35,7 +35,9 @@ to go
   ambient-nutrients
   diffuse nutrients (1 - (Biofilm-Thickness * 0.1))
   ask patches [
+  if not hide-nutrients?[
     set pcolor scale-color (green - 1) nutrients 0 50
+    ]
     set nutrients nutrients * (1 - (Flow-Rate * 0.05))
   ]
   ask turtles with [breed != chitinases][
@@ -69,6 +71,7 @@ to produce_chitinase
     set energy energy - chitinase-cost
     set hunger hunger + 1
     hatch-chitinases 1 [
+      set hidden? hide-chitinases?
       setxy xcor ycor
       set shape "dot"
       set color green
@@ -90,11 +93,22 @@ to reproduce
   if energy > energy-threshold[
     set energy energy - (energy-threshold - 20)
     set hunger hunger + 1
-    hatch 1 [
-      setxy (xcor - 1 + (random-float 2.0)) (ycor - 1 + (random-float 2.0))
-      set energy 20
-    ]
-  ]
+    if-else not (random-float 1.0 < mutation-chance) [
+      hatch 1 [
+        setxy (xcor - 1 + (random-float 2.0)) (ycor - 1 + (random-float 2.0))
+        set energy 20
+    ]][
+        if-else breed = producers[
+          hatch-cheaters 1[
+            set color red
+            setxy (xcor - 1 + (random-float 2.0)) (ycor - 1 + (random-float 2.0))
+            set energy 20
+      ]][
+          hatch-producers 1[
+            set color cyan
+            setxy (xcor - 1 + (random-float 2.0)) (ycor - 1 + (random-float 2.0))
+            set energy 20
+  ]]]]
 end
 
 to move
@@ -233,7 +247,7 @@ Biofilm-Thickness
 Biofilm-Thickness
 0
 10
-8.0
+5.0
 1
 1
 NIL
@@ -259,7 +273,7 @@ Flow-Rate
 Flow-Rate
 0
 10
-3.0
+4.0
 1
 1
 NIL
@@ -290,8 +304,8 @@ TEXTBOX
 14
 227
 164
-245
-Suggested: 100, 0.3, 60, 10
+255
+Suggested: 100, 0.3, 75, 10, 5, 10, 5, 10, 0, 50, 0
 11
 0.0
 0
@@ -308,9 +322,9 @@ Parameters to vary:
 
 PLOT
 8
-251
+255
 418
-552
+556
 Colony counts
 NIL
 NIL
@@ -401,16 +415,53 @@ NIL
 HORIZONTAL
 
 SLIDER
-373
-155
-545
-188
+372
+80
+544
+113
 initial-energy
 initial-energy
 0
 100
 50.0
 1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+419
+257
+568
+290
+hide-chitinases?
+hide-chitinases?
+0
+1
+-1000
+
+SWITCH
+420
+296
+569
+329
+hide-nutrients?
+hide-nutrients?
+0
+1
+-1000
+
+SLIDER
+372
+116
+544
+149
+mutation-chance
+mutation-chance
+0
+0.1
+0.004
+0.001
 1
 NIL
 HORIZONTAL
