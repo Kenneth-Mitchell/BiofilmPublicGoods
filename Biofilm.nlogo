@@ -9,10 +9,8 @@ breed [chitinases chitinase]
 to setup
   clear-all
   setup-bacteria
-
   reset-ticks
 end
-
 
 
 
@@ -20,7 +18,7 @@ to setup-bacteria
   set-default-shape turtles "circle 2"
   create-turtles initial-bacteria [
     setxy random-xcor random-ycor
-    set energy 50
+    set energy initial-energy
     set hunger 10
     if-else (random-float 1.0 < proportion-producer) [
       set breed producers
@@ -34,25 +32,22 @@ to setup-bacteria
 end
 
 to go
+  ambient-nutrients
   diffuse nutrients (1 - (Biofilm-Thickness * 0.1))
   ask patches [
     set pcolor scale-color (green - 1) nutrients 0 50
     set nutrients nutrients * (1 - (Flow-Rate * 0.05))
   ]
 
-  ask producers  [
-    eat
-    produce_chitinase
-  ]
-  ask cheaters[
-    eat
-  ]
+
   ask chitinases[
     produce-nutrients
     move
   ]
   ask turtles with [breed != chitinases][
-    set energy energy - 5
+    eat
+    if breed = producers [produce_chitinase]
+    set energy energy - metabolism
     reproduce
     if energy < 0 [die]
     if count turtles-here with [breed != chitinases] > 5 [die]
@@ -63,7 +58,7 @@ end
 to eat
   ifelse nutrients > 1 [
   set nutrients nutrients - 1
-  set energy energy + 10
+  set energy energy + energy-from-nutrients
   set hunger hunger - 1
   ][
   set hunger hunger + hunger-threshold
@@ -72,8 +67,8 @@ to eat
 end
 
 to produce_chitinase
-  if hunger > hunger-threshold and energy > 20 [
-    set energy energy - 10
+  if hunger > hunger-threshold and energy > chitinase-cost + 10 [
+    set energy energy - chitinase-cost
     set hunger hunger + 1
     hatch-chitinases 1 [
       setxy xcor ycor
@@ -83,8 +78,14 @@ to produce_chitinase
   ]
 end
 
+to ambient-nutrients
+  ask patches [
+    set nutrients nutrients + environment-nutrients
+  ]
+end
+
 to produce-nutrients
-  set nutrients nutrients + 5
+  set nutrients nutrients + nutrients-from-chitinase
 end
 
 to reproduce
@@ -105,9 +106,9 @@ to move
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-529
+567
 10
-1181
+1219
 663
 -1
 -1
@@ -219,7 +220,7 @@ energy-threshold
 energy-threshold
 0
 100
-60.0
+50.0
 1
 1
 NIL
@@ -234,7 +235,7 @@ Biofilm-Thickness
 Biofilm-Thickness
 0
 10
-3.0
+8.0
 1
 1
 NIL
@@ -325,6 +326,96 @@ false
 PENS
 "Producers" 1.0 0 -11221820 true "" "plot count Producers"
 "Cheaters" 1.0 0 -2674135 true "" "plot count Cheaters"
+
+SLIDER
+192
+80
+364
+113
+chitinase-cost
+chitinase-cost
+0
+40
+20.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+191
+118
+363
+151
+metabolism
+metabolism
+0
+10
+5.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+189
+156
+364
+189
+energy-from-nutrients
+energy-from-nutrients
+0
+20
+8.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+189
+190
+376
+223
+environment-nutrients
+environment-nutrients
+0
+2
+0.4
+0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+194
+38
+403
+71
+nutrients-from-chitinase
+nutrients-from-chitinase
+0
+10
+5.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+373
+155
+545
+188
+initial-energy
+initial-energy
+0
+100
+75.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
