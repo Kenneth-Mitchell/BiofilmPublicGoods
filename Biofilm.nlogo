@@ -247,7 +247,7 @@ Biofilm-Thickness
 Biofilm-Thickness
 0
 10
-5.0
+10.0
 1
 1
 NIL
@@ -273,7 +273,7 @@ Flow-Rate
 Flow-Rate
 0
 10
-4.0
+10.0
 1
 1
 NIL
@@ -285,7 +285,7 @@ MONITOR
 378
 667
 Decay
-(1 - (Flow-Rate * 0.05\n))
+((Flow-Rate * 0.05\n))
 17
 1
 11
@@ -460,7 +460,7 @@ mutation-chance
 mutation-chance
 0
 0.1
-0.004
+0.0
 0.001
 1
 NIL
@@ -796,6 +796,57 @@ NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="Test 1" repetitions="5" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="3000"/>
+    <exitCondition>count cheaters = 0</exitCondition>
+    <metric>count producers</metric>
+    <metric>count cheaters</metric>
+    <enumeratedValueSet variable="chitinase-cost">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="Biofilm-Thickness" first="0" step="1" last="10"/>
+    <enumeratedValueSet variable="hunger-threshold">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="metabolism">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="hide-chitinases?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="proportion-producer">
+      <value value="0.3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-bacteria">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="energy-threshold">
+      <value value="75"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-energy">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="hide-nutrients?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="environment-nutrients">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="energy-from-nutrients">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="nutrients-from-chitinase">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="mutation-chance">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="Flow-Rate" first="1" step="1" last="10"/>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
