@@ -35,8 +35,10 @@ to go
   ambient-nutrients
   diffuse nutrients (1 - (Biofilm-Thickness * 0.1))
   ask patches [
-  if not hide-nutrients?[
+  if-else not hide-nutrients?[
     set pcolor scale-color (green - 1) nutrients 0 50
+    ][
+      set pcolor black
     ]
     set nutrients nutrients * (1 - (Flow-Rate * 0.05))
   ]
@@ -49,6 +51,7 @@ to go
     if count turtles-here with [breed != chitinases] > 5 [die]
   ]
     ask chitinases[
+    set hidden? hide-chitinases?
     produce-nutrients
     move
   ]
@@ -247,7 +250,7 @@ Biofilm-Thickness
 Biofilm-Thickness
 0
 10
-10.0
+0.0
 1
 1
 NIL
@@ -273,7 +276,7 @@ Flow-Rate
 Flow-Rate
 0
 10
-10.0
+1.0
 1
 1
 NIL
@@ -436,7 +439,7 @@ SWITCH
 290
 hide-chitinases?
 hide-chitinases?
-0
+1
 1
 -1000
 
@@ -447,7 +450,7 @@ SWITCH
 329
 hide-nutrients?
 hide-nutrients?
-0
+1
 1
 -1000
 
