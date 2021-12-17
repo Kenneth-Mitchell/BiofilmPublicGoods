@@ -35,10 +35,8 @@ to go
   ambient-nutrients
   diffuse nutrients (1 - (Biofilm-Thickness * 0.1))
   ask patches [
-  if-else not hide-nutrients?[
+  if not hide-nutrients?[
     set pcolor scale-color (green - 1) nutrients 0 50
-    ][
-      set pcolor black
     ]
     set nutrients nutrients * (1 - (Flow-Rate * 0.05))
   ]
@@ -51,7 +49,6 @@ to go
     if count turtles-here with [breed != chitinases] > 5 [die]
   ]
     ask chitinases[
-    set hidden? hide-chitinases?
     produce-nutrients
     move
   ]
@@ -250,7 +247,7 @@ Biofilm-Thickness
 Biofilm-Thickness
 0
 10
-0.0
+6.0
 1
 1
 NIL
@@ -336,7 +333,7 @@ NIL
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
 "Producers" 1.0 0 -11221820 true "" "plot count Producers"
@@ -439,7 +436,7 @@ SWITCH
 290
 hide-chitinases?
 hide-chitinases?
-1
+0
 1
 -1000
 
@@ -450,7 +447,7 @@ SWITCH
 329
 hide-nutrients?
 hide-nutrients?
-1
+0
 1
 -1000
 
@@ -476,19 +473,28 @@ This model is meant to analyze under what conditions cooperative bacteria can do
 
 ## HOW IT WORKS
 
-Bacteria have energy, hunger, and position, but are immobile. They are either producers or non-producers of chitinase. If producers reach a certain hunger level, then they produce chitinase. If any bacteria reaches a certain energy level, it will reproduce. Energy decreases over time, while hunger increases over time as a function of nutrients consumed.
+Bacteria have energy, hunger, and position on the chitin plate, but are immobile. They are either producers of chitinase or non-producers, blue and red respectively. If producers reach a certain hunger level, then they produce chitinase. Chitinase then produces nutritents which diffuse into the environment. If any bacteria reaches a certain energy threshold, it will reproduce by creating a child cell in a nearby radius. Energy decreases over time, governed by a metabolic rate, while hunger increases over time as a function of nutrients consumed.
 
-The diffusion of nutrients in the environment and the enzymes which produce chitin are controlled by the biofilm thickness, while decay of these are controlled by the flowrate.
+The main parameters of interest, biofilm thickness and flow rate, have values from 0 - 10. These values dictate the diffusion and decay of chtinase and nutrients. 
 
-The simulation starts with a number of random bacteria (either producers (blue) or non-producers (red)).
+The diffusion number is (1 - (Biofilm Thickness * 0.1)). Each tick, chitinases move a distance equal to the diffusion number (a patch is length 1). Each tick, a ratio (equal to the diffusion number) of a patch’s nutrients are shared equally among its neighbors.
+
+The decay number is (Flow rate * 0.05). Each tick, chitinases have a chance to die equal to the decay number. Each, a ratio (equal to the decay number) of a patch’s nutrients are deleted. This occurs after diffusion.
+
 
 ## HOW TO USE IT
 
-Hunger-threshold controls how hungry producers must be to produce enzymes while energy-threshold controls how much energy an organism needs to reproduce. Other parameters are self explanatory.
+There are various parameters set at default values, and two parameters to vary— biofilm thickness and flow rate. Adjusting these parameters will give differing results, sometimes producers will dominate, sometimes non-producers will kill them off. Some simulations can show stable results in the long term, while others die off quickly.
 
 ## THINGS TO TRY
 
-The default parameters are laid out on the interface. Using those it is interesting to see how biofilm thickness and flowrate changes whether producer colonies thrive or are invaded by cheaters. The initial placement of these colonies influences the results as well.
+The default parameters are laid out on the interface. Using those it is interesting to see how biofilm thickness and flowrate changes whether producer colonies thrive or are invaded by cheaters. 
+
+For producers, the ideal flow rate is around 4 and the ideal biofilm thickness is around 8.
+
+For non producers, the ideal flow rate is around 1, with any biofilm thickness.
+
+One interesting thing to try is changing the environmental nutrients and seeing how that changes the dominant strategy.
 @#$#@#$#@
 default
 true
@@ -800,7 +806,7 @@ NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="Test 1" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="Test 1" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="3000"/>
@@ -837,6 +843,55 @@ NetLogo 6.2.0
     </enumeratedValueSet>
     <enumeratedValueSet variable="environment-nutrients">
       <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="energy-from-nutrients">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="nutrients-from-chitinase">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="mutation-chance">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="Flow-Rate" first="1" step="1" last="10"/>
+  </experiment>
+  <experiment name="Test 1 nutrients" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="3000"/>
+    <exitCondition>count cheaters = 0</exitCondition>
+    <metric>count producers</metric>
+    <metric>count cheaters</metric>
+    <enumeratedValueSet variable="chitinase-cost">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="Biofilm-Thickness" first="0" step="1" last="10"/>
+    <enumeratedValueSet variable="hunger-threshold">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="metabolism">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="hide-chitinases?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="proportion-producer">
+      <value value="0.3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-bacteria">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="energy-threshold">
+      <value value="75"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-energy">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="hide-nutrients?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="environment-nutrients">
+      <value value="0.3"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="energy-from-nutrients">
       <value value="10"/>
